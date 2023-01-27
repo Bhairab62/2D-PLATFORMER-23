@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
     Animator an;
+    [SerializeField] Transform AttackPoint;
+    [SerializeField] GameObject Sword;
 
     public float Speed;
     public float JumpForce;
@@ -16,9 +18,15 @@ public class Player : MonoBehaviour
     public float DashSpeed;
     private float DashTime;
     public float StartDashTime;
+    public float AttackRadius;
+    private bool IsAttack = false;
+
+    public LayerMask Layers;
+
     // Start is called before the first frame update
     void Start()
     {
+        Sword = GameObject.FindGameObjectWithTag("sword");
         DashTime = StartDashTime;
         rb = gameObject.GetComponent<Rigidbody2D>();
         an = gameObject.GetComponent<Animator>();
@@ -44,9 +52,16 @@ public class Player : MonoBehaviour
             IsGround = false;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !IsAttack)
         {
+            //Sword.GetComponent<CircleCollider2D>().enabled = true;
             Attack();
+            IsAttack = true;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            IsAttack = false;
+            Sword.GetComponent<CircleCollider2D>().enabled = false;
         }
         if (Input.GetMouseButtonDown(1))
         {
@@ -85,7 +100,7 @@ public class Player : MonoBehaviour
     }
     void Attack()
     {
-        Debug.Log("Attack!!");
+        //Debug.Log("Attack!!");
         int RandomAttack = Random.Range(0, 3);
         if (RandomAttack == 0)
         {
@@ -126,5 +141,22 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Block!!");
         an.SetTrigger("block");
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "EnemyBullet")
+        {
+            an.SetTrigger("hurt");
+        }
+    }
+    private void OnDrawGizmosSelected()
+    {
+        if (AttackPoint == null)
+            return;
+        Gizmos.DrawWireSphere(AttackPoint.position, AttackRadius);
+    }
+    public void DamageToEnemy()
+    {
+        Sword.GetComponent<CircleCollider2D>().enabled = true;
     }
 }

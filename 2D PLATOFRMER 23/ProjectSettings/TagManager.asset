@@ -7,6 +7,9 @@ TagManager:
   - ground
   - Trail
   - Ground
+  - Enemy
+  - EnemyBullet
+  - sword
   layers:
   - Default
   - TransparentFX
@@ -14,7 +17,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - enemy
   - 
   - 
   - 
